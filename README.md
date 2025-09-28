@@ -2,6 +2,10 @@
 
 Zap It is a Chrome extension that gives you complete control over any website's appearance and content. Remove unwanted elements, customize styles, and create a personalized browsing experience that persists across sessions.
 
+## Demo
+
+![Demo](/demo/demo.gif)
+
 ## Prerequisites
 
 - [Google Chrome](https://www.google.com/chrome/) browser
