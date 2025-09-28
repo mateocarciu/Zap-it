@@ -4,7 +4,7 @@ Zap It is a Chrome extension that gives you complete control over any website's 
 
 ## Demo
 
-![Demo](/demo/demo.gif)
+![Demo](/assets/demo/demo.gif)
 
 ## Prerequisites
 
