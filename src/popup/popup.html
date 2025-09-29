@@ -42,12 +42,20 @@
 							<h3>Rules</h3>
 							<span id="rulesCount" class="rules-badge">0</span>
 						</div>
-						<button id="clearRules" class="action-btn clear-btn" style="display: none" title="Clear all rules">
-							<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-								<path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14Z" />
-								<path d="M10 11v6M14 11v6" />
-							</svg>
-						</button>
+						<div class="section-actions">
+							<button id="reapplyRules" class="action-btn reapply-btn" style="display: none" title="Re-apply all rules">
+								<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<path d="M23 4v6h-6M1 20v-6h6" />
+									<path d="m3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+								</svg>
+							</button>
+							<button id="clearRules" class="action-btn clear-btn" style="display: none" title="Clear all rules">
+								<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14Z" />
+									<path d="M10 11v6M14 11v6" />
+								</svg>
+							</button>
+						</div>
 					</div>
 
 					<div id="rulesList" class="rules-list"></div>

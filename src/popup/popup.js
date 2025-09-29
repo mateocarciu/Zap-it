@@ -20,6 +20,7 @@ class ZapItPopup {
 	setupEventListeners() {
 		const toggleMode = document.getElementById('toggleMode')
 		const clearRules = document.getElementById('clearRules')
+		const reapplyRules = document.getElementById('reapplyRules')
 
 		toggleMode.addEventListener('change', (e) => {
 			this.toggleEditMode(e.target.checked)
@@ -27,6 +28,10 @@ class ZapItPopup {
 
 		clearRules.addEventListener('click', () => {
 			this.clearAllRules()
+		})
+
+		reapplyRules.addEventListener('click', () => {
+			this.reapplyAllRules()
 		})
 	}
 
@@ -89,6 +94,7 @@ class ZapItPopup {
 		const rulesList = document.getElementById('rulesList')
 		const rulesCount = document.getElementById('rulesCount')
 		const clearRules = document.getElementById('clearRules')
+		const reapplyRules = document.getElementById('reapplyRules')
 		const noRules = document.getElementById('noRules')
 
 		rulesCount.textContent = rules.length
@@ -97,10 +103,12 @@ class ZapItPopup {
 			rulesList.style.display = 'none'
 			noRules.style.display = 'block'
 			clearRules.style.display = 'none'
+			reapplyRules.style.display = 'none'
 		} else {
 			rulesList.style.display = 'flex'
 			noRules.style.display = 'none'
 			clearRules.style.display = 'flex'
+			reapplyRules.style.display = 'flex'
 
 			rulesList.innerHTML = rules
 				.map(
@@ -219,6 +227,18 @@ class ZapItPopup {
 			})
 		} catch (error) {
 			console.error('Error removing from DOM:', error)
+		}
+	}
+
+	async reapplyAllRules() {
+		if (!this.currentTab) return
+
+		try {
+			await chrome.tabs.sendMessage(this.currentTab.id, {
+				action: 'reapplyRules'
+			})
+		} catch (error) {
+			console.error('Error reapplying rules:', error)
 		}
 	}
 

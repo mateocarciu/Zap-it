@@ -56,6 +56,10 @@ class ZapItContentScript {
 				}
 				break
 
+			case 'reapplyRules':
+				this.loadAndApplyRules()
+				break
+
 			case 'removeRuleFromDOM':
 				this.removeRuleFromDOM(message.rule)
 				break
