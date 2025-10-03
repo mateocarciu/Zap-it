@@ -7,6 +7,7 @@ class ZapItContentScript {
 		this.stylePanel = null
 		this.currentSelectedElement = null
 		this.appliedRules = []
+		this.currentEditingElement = null
 
 		this.init()
 	}
@@ -124,7 +125,7 @@ class ZapItContentScript {
 
 		const element = event.target
 
-		if (element.classList.contains('zapit-selector-overlay') || element.closest('.zapit-context-menu') || element.closest('.zapit-style-panel')) {
+		if (element.classList.contains('zapit-selector-overlay') || element.closest('.zapit-context-menu') || element.closest('.zapit-style-panel') || element.contentEditable === 'true' || this.currentEditingElement) {
 			return
 		}
 
@@ -142,7 +143,7 @@ class ZapItContentScript {
 
 		const element = event.target
 
-		if (element.closest('.zapit-context-menu') || element.closest('.zapit-style-panel')) {
+		if (element.closest('.zapit-context-menu') || element.closest('.zapit-style-panel') || element.contentEditable === 'true' || this.currentEditingElement) {
 			return
 		}
 
@@ -156,6 +157,11 @@ class ZapItContentScript {
 	}
 	handleKeyDown(event) {
 		if (event.key === 'Escape') {
+			if (this.currentEditingElement) {
+				this.currentEditingElement.blur()
+				return
+			}
+
 			this.hideContextMenu()
 			this.hideStylePanel()
 			if (this.isSelecting) {
@@ -211,6 +217,11 @@ class ZapItContentScript {
 			<div class="zapit-context-menu-header">
 				${tagName} - Available actions
 			</div>
+			<button class="zapit-context-menu-item" data-action="editText">
+				<span class="icon">✏️</span>
+				Edit text
+			</button>
+			<div class="zapit-context-menu-separator"></div>
 			<button class="zapit-context-menu-item danger" data-action="remove">
 				<span class="icon">🗑️</span>
 				Delete this element
@@ -282,6 +293,10 @@ class ZapItContentScript {
 		const selector = this.getElementSelector(element)
 
 		switch (action) {
+			case 'editText':
+				this.enableTextEdit(element, selector)
+				break
+
 			case 'remove':
 				await this.removeElement(element, selector)
 				break
@@ -545,6 +560,13 @@ class ZapItContentScript {
 							})
 						}
 						break
+
+					case 'editText':
+						if (element.dataset.zapitOriginalText) {
+							element.innerHTML = element.dataset.zapitOriginalText
+							delete element.dataset.zapitOriginalText
+						}
+						break
 				}
 			})
 		} catch (error) {
@@ -579,6 +601,13 @@ class ZapItContentScript {
 								Object.keys(rule.styles).forEach((property) => {
 									element.style[property] = rule.styles[property]
 								})
+							}
+							break
+
+						case 'editText':
+							if (rule.newText && !element.dataset.zapitOriginalText) {
+								element.dataset.zapitOriginalText = element.innerHTML
+								element.innerHTML = rule.newText
 							}
 							break
 					}
@@ -747,10 +776,83 @@ class ZapItContentScript {
 			delete element.dataset.zapitOriginalStyles
 		})
 
+		const textElements = document.querySelectorAll('[data-zapit-original-text]')
+		textElements.forEach((element) => {
+			element.innerHTML = element.dataset.zapitOriginalText
+			delete element.dataset.zapitOriginalText
+		})
+
 		const removedElements = document.querySelectorAll('.zapit-removed')
 		removedElements.forEach((element) => {
 			element.classList.remove('zapit-removed')
 		})
+	}
+
+	enableTextEdit(element, selector) {
+		if (!element.textContent.trim() && !element.innerHTML.trim()) {
+			alert('Cet élément ne contient pas de texte à éditer.')
+			return
+		}
+
+		this.currentEditingElement = element
+
+		const originalText = element.innerHTML
+		const originalStyles = {
+			outline: element.style.outline || '',
+			backgroundColor: element.style.backgroundColor || '',
+			padding: element.style.padding || '',
+			cursor: element.style.cursor || ''
+		}
+
+		element.style.outline = '2px solid #fbbf24'
+		element.style.backgroundColor = 'rgba(251, 191, 36, 0.1)'
+		element.style.padding = element.style.padding || '4px'
+		element.style.cursor = 'text'
+
+		element.contentEditable = true
+		element.focus()
+
+		const range = document.createRange()
+		const selection = window.getSelection()
+		range.selectNodeContents(element)
+		selection.removeAllRanges()
+		selection.addRange(range)
+
+		const saveEdit = async () => {
+			const newText = element.innerHTML
+
+			if (newText !== originalText) {
+				const rule = {
+					selector: selector,
+					action: 'editText',
+					originalText: originalText,
+					newText: newText
+				}
+				await this.saveRule(rule)
+			}
+
+			element.contentEditable = false
+			this.currentEditingElement = null
+			Object.keys(originalStyles).forEach((property) => {
+				element.style[property] = originalStyles[property]
+			})
+
+			element.removeEventListener('blur', saveEdit)
+			element.removeEventListener('keydown', handleKeyDown)
+		}
+
+		const handleKeyDown = (e) => {
+			if (e.key === 'Enter' && !e.shiftKey) {
+				e.preventDefault()
+				element.blur()
+			} else if (e.key === 'Escape') {
+				element.innerHTML = originalText
+				element.blur()
+			}
+		}
+
+		element.addEventListener('blur', saveEdit, { once: true })
+		element.addEventListener('keydown', handleKeyDown)
 	}
 }
 
