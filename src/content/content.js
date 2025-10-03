@@ -318,6 +318,14 @@ class ZapItContentScript {
 		panel.className = 'zapit-style-panel'
 
 		const computedStyle = window.getComputedStyle(element)
+		this.originalStyles = {
+			backgroundColor: element.style.backgroundColor || '',
+			color: element.style.color || '',
+			fontSize: element.style.fontSize || '',
+			border: element.style.border || '',
+			padding: element.style.padding || '',
+			margin: element.style.margin || ''
+		}
 
 		panel.innerHTML = `
 			<div class="zapit-style-panel-header">
@@ -373,12 +381,13 @@ class ZapItContentScript {
 		`
 
 		document.body.appendChild(panel)
-		this.stylePanel = { panel, backdrop }
+		this.stylePanel = { panel, backdrop, element }
 
 		// Add drag functionality
 		this.makePanelDraggable(panel)
 
 		panel.querySelector('.zapit-style-panel-close').addEventListener('click', () => {
+			this.restoreOriginalStyles()
 			this.hideStylePanel()
 		})
 
@@ -387,10 +396,12 @@ class ZapItContentScript {
 		})
 
 		panel.querySelector('#cancelStyles').addEventListener('click', () => {
+			this.restoreOriginalStyles()
 			this.hideStylePanel()
 		})
 
 		backdrop.addEventListener('click', () => {
+			this.restoreOriginalStyles()
 			this.hideStylePanel()
 		})
 
@@ -522,7 +533,13 @@ class ZapItContentScript {
 						break
 
 					case 'style':
-						if (rule.styles) {
+						if (element.dataset.zapitOriginalStyles) {
+							const originalStyles = JSON.parse(element.dataset.zapitOriginalStyles)
+							Object.keys(originalStyles).forEach((property) => {
+								element.style[property] = originalStyles[property]
+							})
+							delete element.dataset.zapitOriginalStyles
+						} else if (rule.styles) {
 							Object.keys(rule.styles).forEach((property) => {
 								element.style.removeProperty(property)
 							})
@@ -536,6 +553,8 @@ class ZapItContentScript {
 	}
 
 	applyRules(rules) {
+		this.clearAppliedStyles()
+
 		rules.forEach((rule) => {
 			try {
 				const escapedSelector = this.escapeSelector(rule.selector)
@@ -549,6 +568,14 @@ class ZapItContentScript {
 
 						case 'style':
 							if (rule.styles) {
+								if (!element.dataset.zapitOriginalStyles) {
+									const originalStyles = {}
+									Object.keys(rule.styles).forEach((property) => {
+										originalStyles[property] = element.style[property] || ''
+									})
+									element.dataset.zapitOriginalStyles = JSON.stringify(originalStyles)
+								}
+
 								Object.keys(rule.styles).forEach((property) => {
 									element.style[property] = rule.styles[property]
 								})
@@ -699,6 +726,31 @@ class ZapItContentScript {
 		// Add visual feedback
 		header.style.setProperty('cursor', 'move', 'important')
 		header.title = 'Cliquez et glissez pour déplacer'
+	}
+
+	restoreOriginalStyles() {
+		if (!this.stylePanel || !this.stylePanel.element || !this.originalStyles) return
+
+		const element = this.stylePanel.element
+		Object.keys(this.originalStyles).forEach((property) => {
+			element.style[property] = this.originalStyles[property]
+		})
+	}
+
+	clearAppliedStyles() {
+		const styledElements = document.querySelectorAll('[data-zapit-original-styles]')
+		styledElements.forEach((element) => {
+			const originalStyles = JSON.parse(element.dataset.zapitOriginalStyles)
+			Object.keys(originalStyles).forEach((property) => {
+				element.style[property] = originalStyles[property]
+			})
+			delete element.dataset.zapitOriginalStyles
+		})
+
+		const removedElements = document.querySelectorAll('.zapit-removed')
+		removedElements.forEach((element) => {
+			element.classList.remove('zapit-removed')
+		})
 	}
 }
 
