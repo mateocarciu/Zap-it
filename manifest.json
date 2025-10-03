@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Zap It - Element Editor",
   "version": "1.0.0",
-  "description": "Sélectionnez et modifiez visuellement les éléments HTML sur n'importe quelle page web",
+  "description": "A Chrome extension to edit and manipulate web page elements directly.",
   
   "permissions": [
     "activeTab",

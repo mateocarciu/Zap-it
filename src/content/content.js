@@ -321,49 +321,49 @@ class ZapItContentScript {
 
 		panel.innerHTML = `
 			<div class="zapit-style-panel-header">
-				<span>🎨 Edit style</span>
+				<span>Edit Element Style</span>
 				<button class="zapit-style-panel-close">×</button>
 			</div>
 			<div class="zapit-style-panel-content">
 				<div class="zapit-style-group">
-					<div class="zapit-style-group-title">Background color</div>
+					<div class="zapit-style-group-title">Background Color</div>
 					<input type="color" class="zapit-style-input" id="backgroundColor" 
-						   value="${this.rgbToHex(computedStyle.backgroundColor)}">
+						   value="${this.rgbToHex(computedStyle.backgroundColor)}" title="Click to choose background color">
 				</div>
 				
 				<div class="zapit-style-group">
-					<div class="zapit-style-group-title">Text color</div>
+					<div class="zapit-style-group-title">Text Color</div>
 					<input type="color" class="zapit-style-input" id="color" 
-						   value="${this.rgbToHex(computedStyle.color)}">
+						   value="${this.rgbToHex(computedStyle.color)}" title="Click to choose text color">
 				</div>
 				
 				<div class="zapit-style-group">
-					<div class="zapit-style-group-title">Font size</div>
+					<div class="zapit-style-group-title">Font Size</div>
 					<input type="text" class="zapit-style-input" id="fontSize" 
-						   value="${computedStyle.fontSize}" placeholder="16px">
+						   value="${computedStyle.fontSize}" placeholder="e.g. 16px, 1.2em, 120%">
 				</div>
 				
 				<div class="zapit-style-group">
 					<div class="zapit-style-group-title">Border</div>
 					<input type="text" class="zapit-style-input" id="border" 
-						   value="${computedStyle.border}" placeholder="1px solid #000">
+						   value="${computedStyle.border}" placeholder="e.g. 1px solid #000, 2px dashed red">
 				</div>
 				
 				<div class="zapit-style-group">
 					<div class="zapit-style-group-title">Padding</div>
 					<input type="text" class="zapit-style-input" id="padding" 
-						   value="${computedStyle.padding}" placeholder="10px">
+						   value="${computedStyle.padding}" placeholder="e.g. 10px, 5px 10px">
 				</div>
 				
 				<div class="zapit-style-group">
 					<div class="zapit-style-group-title">Margin</div>
 					<input type="text" class="zapit-style-input" id="margin" 
-						   value="${computedStyle.margin}" placeholder="10px">
+						   value="${computedStyle.margin}" placeholder="e.g. 10px, 5px 10px">
 				</div>
 				
 				<div class="zapit-style-buttons">
 					<button class="zapit-button zapit-button-primary" id="applyStyles">
-						Apply
+						Apply Changes
 					</button>
 					<button class="zapit-button zapit-button-secondary" id="cancelStyles">
 						Cancel
@@ -374,6 +374,9 @@ class ZapItContentScript {
 
 		document.body.appendChild(panel)
 		this.stylePanel = { panel, backdrop }
+
+		// Add drag functionality
+		this.makePanelDraggable(panel)
 
 		panel.querySelector('.zapit-style-panel-close').addEventListener('click', () => {
 			this.hideStylePanel()
@@ -604,6 +607,98 @@ class ZapItContentScript {
 				})
 				.join('')
 		)
+	}
+
+	makePanelDraggable(panel) {
+		const header = panel.querySelector('.zapit-style-panel-header')
+		if (!header) {
+			console.log('Header not found!')
+			return
+		}
+
+		// Force cursor style immediately
+		header.style.setProperty('cursor', 'move', 'important')
+
+		let isDragging = false
+		let startX = 0
+		let startY = 0
+		let startLeft = 0
+		let startTop = 0
+
+		const handleMouseDown = (e) => {
+			if (e.target.classList.contains('zapit-style-panel-close')) {
+				return
+			}
+
+			// Only start drag if clicking on header (but not close button)
+			if (e.target === header || (header.contains(e.target) && !e.target.classList.contains('zapit-style-panel-close'))) {
+				isDragging = true
+
+				// Get current panel position
+				const panelStyle = window.getComputedStyle(panel)
+				startLeft = parseInt(panelStyle.left) || 50
+				startTop = parseInt(panelStyle.top) || 50
+
+				// Get mouse position
+				startX = e.clientX
+				startY = e.clientY
+
+				header.style.setProperty('cursor', 'grabbing', 'important')
+				document.body.style.userSelect = 'none'
+				e.preventDefault()
+				e.stopPropagation()
+			}
+		}
+
+		const handleMouseMove = (e) => {
+			if (!isDragging) return
+
+			e.preventDefault()
+			e.stopPropagation()
+
+			// Calculate new position
+			const deltaX = e.clientX - startX
+			const deltaY = e.clientY - startY
+			let newLeft = startLeft + deltaX
+			let newTop = startTop + deltaY
+
+			// Get panel and viewport dimensions
+			const panelRect = panel.getBoundingClientRect()
+			const maxX = window.innerWidth - panelRect.width
+			const maxY = window.innerHeight - panelRect.height
+
+			// Constrain to viewport bounds
+			newLeft = Math.max(0, Math.min(newLeft, maxX))
+			newTop = Math.max(0, Math.min(newTop, maxY))
+
+			// Apply new position with important to override CSS
+			panel.style.setProperty('left', newLeft + 'px', 'important')
+			panel.style.setProperty('top', newTop + 'px', 'important')
+		}
+
+		const handleMouseUp = (e) => {
+			if (isDragging) {
+				isDragging = false
+				header.style.setProperty('cursor', 'move', 'important')
+				document.body.style.userSelect = ''
+				e.preventDefault()
+				e.stopPropagation()
+			}
+		}
+
+		// Remove any existing listeners first
+		header.removeEventListener('mousedown', handleMouseDown)
+		document.removeEventListener('mousemove', handleMouseMove)
+		document.removeEventListener('mouseup', handleMouseUp)
+
+		// Add event listeners
+		header.addEventListener('mousedown', handleMouseDown, { passive: false })
+		document.addEventListener('mousemove', handleMouseMove, { passive: false })
+		document.addEventListener('mouseup', handleMouseUp, { passive: false })
+
+		// Add visual feedback
+		header.style.setProperty('cursor', 'move', 'important')
+		header.title = 'Cliquez et glissez pour déplacer'
 	}
 }
 
