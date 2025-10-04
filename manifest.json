@@ -21,31 +21,40 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["src/content/content.js"],
-      "css": ["src/content/content.css"],
+      "js": [
+        "src/content/utils/Utils.js",
+        "src/content/modules/ElementSelector.js",
+        "src/content/managers/EventManager.js",
+        "src/content/modules/ContextMenu.js",
+        "src/content/modules/StylePanel.js",
+        "src/content/managers/RuleManager.js",
+        "src/content/modules/TextEditor.js",
+        "src/content/content.js"
+      ],
+      "css": ["src/content/css/content.css"],
       "run_at": "document_end"
     }
   ],
   
   "action": {
-    "default_popup": "src/popup/popup.html",
+    "default_popup": "src/popup/html/popup.html",
     "default_title": "Zap It - Element Editor",
     "default_icon": {
-      "16": "assets/icon16.png",
-      "48": "assets/icon48.png",
-      "128": "assets/icon128.png"
+      "16": "assets/icons/icon16.png",
+      "48": "assets/icons/icon48.png",
+      "128": "assets/icons/icon128.png"
     }
   },
 
   "icons": {
-    "16": "assets/icon16.png",
-    "48": "assets/icon48.png",
-    "128": "assets/icon128.png"
+    "16": "assets/icons/icon16.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
   },
   
   "web_accessible_resources": [
     {
-      "resources": ["src/content/content.css"],
+      "resources": ["src/content/css/content.css"],
       "matches": ["<all_urls>"]
     }
   ]
