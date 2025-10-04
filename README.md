@@ -1,6 +1,6 @@
-# Zap It
+# Zap It - Element Editor
 
-Zap It is a Chrome extension that gives you complete control over any website's appearance and content. Remove unwanted elements, customize styles, and create a personalized browsing experience that persists across sessions.
+Zap It is a powerful Chrome extension that gives you complete control over any website's appearance and content. Remove unwanted elements, customize styles, edit text content, and create a personalized browsing experience that persists across sessions.
 
 ## Demo
 
@@ -13,13 +13,27 @@ Zap It is a Chrome extension that gives you complete control over any website's 
 
 ## Features
 
+### Core Editing Capabilities
+
 - **Element removal:** Delete any unwanted element from web pages (ads, popups, distracting content)
-- **Style customization:** Modify colors, font sizes, opacity, and other CSS properties
+- **Style customization:** Modify colors, backgrounds, font sizes, borders, padding, and margins with live preview
+- **Text editing:** Edit any text content inline with Enter/Escape key support
+- **Smart element selection:** Intelligent highlighting system with element info tooltips
+- **Context menus:** Right-click style interface for quick access to editing options
+
+### Advanced Features
+
 - **Persistent storage:** All modifications are automatically saved and reapplied on subsequent visits
-- **Real-time preview:** See changes instantly as you make them
+- **Real-time preview:** See changes instantly as you make them with live style preview
 - **Rule management:** Organize and manage your customizations by domain
 - **Universal compatibility:** Works on all websites, including those using modern frameworks
-- **CSS selector intelligence:** Handles complex selectors including Tailwind CSS classes
+- **CSS selector intelligence:** Handles complex selectors including Tailwind CSS classes and special characters
+- **Draggable style panel:** Moveable interface that doesn't interfere with your editing workflow
+
+### User Interface
+
+- **Toggle edit mode:** Easy on/off switching for editing functionality
+- **Visual feedback:** Smooth highlighting and overlay system
 
 ## Installation
 
