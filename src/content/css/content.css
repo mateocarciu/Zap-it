@@ -210,10 +210,9 @@
 }
 
 .zapit-style-panel-header::before {
-    content: "🎨 " !important;
-    color: #fbbf24 !important;
-    font-size: 18px !important;
+    content: url("data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23fbbf24' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='13.5' cy='6.5' r='.5'/%3E%3Ccircle cx='17.5' cy='10.5' r='.5'/%3E%3Ccircle cx='8.5' cy='7.5' r='.5'/%3E%3Ccircle cx='6.5' cy='12.5' r='.5'/%3E%3Cpath d='M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z'/%3E%3C/svg%3E") !important;
     margin-right: 8px !important;
+    vertical-align: middle !important;
 }
 
 .zapit-style-panel-close {
@@ -431,4 +430,63 @@ body.zapit-selection-mode .zapit-style-panel * {
 
 .zapit-style-panel-content::-webkit-scrollbar-thumb:hover {
     background: rgba(251, 191, 36, 0.5) !important;
+}
+/* SVG Icons alignment */
+.zapit-context-menu-item .icon svg {
+    vertical-align: middle !important;
+    margin-right: 0 !important;
+    display: inline-block !important;
+}
+
+.zapit-context-menu-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+.zapit-context-menu-item .icon {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 20px !important;
+    height: 20px !important;
+    flex-shrink: 0 !important;
+}
+
+/* SVG Icons colors */
+.zapit-context-menu-item[data-action="editText"] .icon svg {
+    stroke: #3b82f6 !important;
+}
+
+.zapit-context-menu-item[data-action="style"] .icon svg {
+    stroke: #f59e0b !important;
+}
+
+.zapit-context-menu-item[data-action="remove"] .icon svg {
+    stroke: #ef4444 !important;
+}
+
+.zapit-context-menu-item[data-action="cancel"] .icon svg {
+    stroke: #6b7280 !important;
+}
+
+/* Hover effects */
+.zapit-context-menu-item:hover[data-action="editText"] .icon svg {
+    stroke: #2563eb !important;
+}
+
+.zapit-context-menu-item:hover[data-action="style"] .icon svg {
+    stroke: #d97706 !important;
+}
+
+.zapit-context-menu-item:hover[data-action="remove"] .icon svg {
+    stroke: #dc2626 !important;
+}
+
+.zapit-context-menu-item:hover[data-action="cancel"] .icon svg {
+    stroke: #4b5563 !important;
+}
+
+.empty-icon {
+    stroke: #fbbf24 !important;
 }
