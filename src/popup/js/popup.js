@@ -64,7 +64,7 @@ class ZapItPopup {
 				window.close()
 			}, 200)
 		} catch (error) {
-			console.error('Error toggling mode:', error)
+			// console.error('Error toggling mode:', error)
 			if (error.message.includes('Receiving end does not exist')) {
 				chrome.tabs.reload(this.currentTab.id)
 			}

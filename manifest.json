@@ -1,13 +1,12 @@
 {
   "manifest_version": 3,
-  "name": "Zap It - Element Editor",
+  "name": "Zap It - Web Page Editor",
   "version": "1.0.0",
-  "description": "A Chrome extension to edit and manipulate web page elements directly.",
+  "description": "Real-time web editing tool for developers, designers, and creators. Edit text and styles directly on pages without writing code.",
   
   "permissions": [
     "activeTab",
-    "storage",
-    "scripting"
+    "storage"
   ],
   
   "host_permissions": [
