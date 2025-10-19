@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Zap It - Web Page Editor",
-  "version": "1.0.0",
-  "description": "Real-time web editing tool for developers, designers, and creators. Edit text and styles directly on pages without writing code.",
+  "version": "1.0.1",
+  "description": "Edit text and styles from any web page, remove elements, and persist changes across visits.",
   
   "permissions": [
     "activeTab",

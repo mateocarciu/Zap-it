@@ -49,8 +49,12 @@ window.ZapItTextEditor = class {
 			const newText = element.innerHTML
 
 			if (newText !== originalText) {
+				// Generate unique selector to avoid affecting other elements
+				const selectorInfo = this.contentScript.ruleManager.ensureUniqueSelector(element, selector)
+
 				const rule = {
-					selector: selector,
+					selector: selectorInfo.uniqueSelector,
+					baseSelector: selectorInfo.baseSelector,
 					action: 'editText',
 					originalText: originalText,
 					newText: newText

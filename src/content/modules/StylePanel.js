@@ -198,9 +198,13 @@ window.ZapItStylePanel = class {
 			element.style[property] = styles[property]
 		})
 
+		// Generate unique selector to avoid affecting other elements
+		const selectorInfo = this.contentScript.ruleManager.ensureUniqueSelector(element, selector)
+
 		// Save rule
 		const rule = {
-			selector: selector,
+			selector: selectorInfo.uniqueSelector,
+			baseSelector: selectorInfo.baseSelector,
 			action: 'style',
 			styles: styles
 		}

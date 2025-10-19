@@ -66,27 +66,67 @@ window.ZapItUtils = {
 	 * @returns {string} CSS selector string
 	 */
 	getElementSelector(element) {
-		const tagName = element.tagName.toLowerCase()
-
 		if (element.id) {
 			const escapedId = element.id.replace(/:/g, '\\:')
 			return `#${escapedId}`
 		}
 
+		// Strategy 1: Try with unique attributes
+		const uniqueSelector = this.getUniqueAttributeSelector(element)
+		if (uniqueSelector && this.isUniqueSelector(uniqueSelector)) {
+			return uniqueSelector
+		}
+
+		// Strategy 2: Build specific complete path
+		return this.buildSpecificPath(element)
+	},
+
+	/**
+	 * Finds a selector based on unique attributes
+	 */
+	getUniqueAttributeSelector(element) {
+		const tagName = element.tagName.toLowerCase()
+
+		const uniqueAttrs = ['data-testid', 'data-cy', 'data-qa', 'aria-label', 'title', 'alt', 'href', 'src']
+
+		for (const attr of uniqueAttrs) {
+			const value = element.getAttribute(attr)
+			if (value && value.trim()) {
+				const selector = `${tagName}[${attr}="${CSS.escape(value)}"]`
+				if (this.isUniqueSelector(selector)) {
+					return selector
+				}
+			}
+		}
+
+		// Try with specific classes
 		if (element.className) {
 			const classNameStr = typeof element.className === 'string' ? element.className : element.className.baseVal || element.className.toString()
-
 			const classes = classNameStr
 				.trim()
 				.split(/\s+/)
 				.filter((cls) => !cls.startsWith('zapit-'))
 				.map((cls) => cls.replace(/:/g, '\\:'))
-				.join('.')
-			if (classes) {
-				return `${tagName}.${classes}`
+
+			// Try each combination of classes
+			for (let i = classes.length; i > 0; i--) {
+				const classCombo = classes.slice(0, i).join('.')
+				if (classCombo) {
+					const selector = `${tagName}.${classCombo}`
+					if (this.isUniqueSelector(selector)) {
+						return selector
+					}
+				}
 			}
 		}
 
+		return null
+	},
+
+	/**
+	 * Builds a full, specific path for the element
+	 */
+	buildSpecificPath(element) {
 		const path = []
 		let current = element
 
@@ -98,19 +138,50 @@ window.ZapItUtils = {
 				selector += `#${escapedId}`
 				path.unshift(selector)
 				break
-			} else {
-				const sibling = Array.from(current.parentNode?.children || []).filter((child) => child.tagName === current.tagName)
-				if (sibling.length > 1) {
-					const index = sibling.indexOf(current) + 1
-					selector += `:nth-of-type(${index})`
-				}
-				path.unshift(selector)
 			}
 
+			// Add the most specific classes
+			if (current.className) {
+				const classNameStr = typeof current.className === 'string' ? current.className : current.className.baseVal || current.className.toString()
+				const classes = classNameStr
+					.trim()
+					.split(/\s+/)
+					.filter((cls) => !cls.startsWith('zapit-'))
+					.slice(0, 3) // Limit to 3 classes max to avoid overly long selectors
+
+				if (classes.length > 0) {
+					const classStr = classes.map((cls) => cls.replace(/:/g, '\\:')).join('.')
+					selector += `.${classStr}`
+				}
+			}
+
+			if (current.parentNode) {
+				const siblings = Array.from(current.parentNode.children)
+				const index = siblings.indexOf(current) + 1
+				selector += `:nth-child(${index})`
+			}
+
+			path.unshift(selector)
 			current = current.parentNode
+
+			if (path.length >= 3) {
+				break
+			}
 		}
 
 		return path.join(' > ')
+	},
+
+	/**
+	 * Checks if a selector is unique on the page
+	 */
+	isUniqueSelector(selector) {
+		try {
+			const elements = document.querySelectorAll(selector)
+			return elements.length === 1
+		} catch (e) {
+			return false
+		}
 	},
 
 	/**
