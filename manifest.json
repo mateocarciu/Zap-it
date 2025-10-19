@@ -37,7 +37,7 @@
   
   "action": {
     "default_popup": "src/popup/html/popup.html",
-    "default_title": "Zap It - Element Editor",
+    "default_title": "Zap It - Web Page Editor",
     "default_icon": {
       "16": "assets/icons/icon16.png",
       "48": "assets/icons/icon48.png",
