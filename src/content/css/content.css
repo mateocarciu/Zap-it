@@ -387,9 +387,32 @@
     background: rgba(251, 191, 36, 0.5) !important;
 }
 
+@keyframes zapitFadeOut {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(0.95);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.9);
+        height: 0;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+.zapit-removing {
+    animation: zapitFadeOut 0.4s cubic-bezier(0.4, 0, 1, 1) forwards !important;
+    pointer-events: none !important;
+    overflow: hidden !important;
+}
+
 .zapit-removed,
-*.zapit-removed,
-.zapit-removed * {
+*.zapit-removed {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;

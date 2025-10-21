@@ -35,7 +35,12 @@ window.ZapItRuleManager = class {
 		// Generate unique selector if current selector is not specific enough
 		const selectorInfo = this.ensureUniqueSelector(element, selector)
 
-		element.classList.add('zapit-removed')
+		element.classList.add('zapit-removing')
+
+		setTimeout(() => {
+			element.classList.remove('zapit-removing')
+			element.classList.add('zapit-removed')
+		}, 400)
 
 		const rule = {
 			selector: selectorInfo.uniqueSelector,
@@ -222,6 +227,7 @@ window.ZapItRuleManager = class {
 	applyRuleToElement(element, rule) {
 		switch (rule.action) {
 			case 'remove':
+				// Appliquer directement sans animation pour les règles chargées au démarrage
 				element.classList.add('zapit-removed')
 				break
 
