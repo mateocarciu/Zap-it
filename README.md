@@ -1,77 +1,54 @@
-# Zap It - Element Editor
+# Zap It - Web Page Editor
 
-Zap It is a powerful Chrome extension that gives you complete control over any website's appearance and content. Remove unwanted elements, customize styles, edit text content, and create a personalized browsing experience that persists across sessions.
+A powerful browser extension to edit, remove, and customize any website's elements. Your changes persist across sessions.
+
+**Available for Chrome and Firefox!**
 
 ## Demo
 
 ![Demo](/assets/demo/demo.gif)
 
-## Prerequisites
-
-- [Google Chrome](https://www.google.com/chrome/) browser
-- Developer mode enabled in Chrome extensions
-
 ## Features
 
-### Core Editing Capabilities
-
-- **Element removal:** Delete any unwanted element from web pages (ads, popups, distracting content)
-- **Style customization:** Modify colors, backgrounds, font sizes, borders, padding, and margins with live preview
-- **Text editing:** Edit any text content inline with Enter/Escape key support
-- **Smart element selection:** Intelligent highlighting system with element info tooltips
-- **Context menus:** Right-click style interface for quick access to editing options
-
-### Advanced Features
-
-- **Persistent storage:** All modifications are automatically saved and reapplied on subsequent visits
-- **Real-time preview:** See changes instantly as you make them with live style preview
-- **Rule management:** Organize and manage your customizations by domain
-- **Universal compatibility:** Works on all websites, including those using modern frameworks
-- **CSS selector intelligence:** Handles complex selectors including Tailwind CSS classes and special characters
-- **Draggable style panel:** Moveable interface that doesn't interfere with your editing workflow
-
-### User Interface
-
-- **Toggle edit mode:** Easy on/off switching for editing functionality
-- **Visual feedback:** Smooth highlighting and overlay system
+- **Remove elements** - Delete ads, popups, and distracting content
+- **Customize styles** - Modify colors, fonts, spacing, and more with live preview
+- **Edit text** - Change any text content inline
+- **Persistent changes** - Modifications are saved and auto-applied on revisit
+- **Smart selection** - Intelligent element highlighting and CSS selector handling
+- **Intuitive interface** - Draggable style panel and context menus
 
 ## Installation
 
-Clone or download the extension and install it in Chrome:
+### Chrome
 
-1. Open Chrome and navigate to `chrome://extensions/`
-2. Enable **Developer mode** using the toggle in the top right corner
-3. Click **Load unpacked** and select the "Zap it" folder
-4. The extension icon will appear in your Chrome toolbar
+1. Clone this repository
+2. Open `chrome://extensions/`
+3. Enable **Developer mode**
+4. Click **Load unpacked** → Select the extension folder
+
+### Firefox
+
+1. Clone this repository
+2. Rename `manifest_firefox.json` to `manifest.json`
+3. Open `about:debugging#/runtime/this-firefox`
+4. Click **Load Temporary Add-on** → Select `manifest.json`
 
 ## Usage
 
-1. Click the Zap It icon in your Chrome toolbar
-2. Toggle the editing mode using the switch in the popup
-3. Hover over any element on the page to highlight it
-4. Click on highlighted elements to access the context menu
-5. Choose to either remove the element or customize its style
-6. Your changes are automatically saved and will persist across browser sessions
+1. Click the Zap It icon in your toolbar
+2. Toggle edit mode ON
+3. Hover and click elements to edit or remove them
+4. Changes save automatically!
 
 ## Architecture
 
-The extension is built using Chrome's Manifest V3 and consists of:
+- Uses **Manifest V3** for Chrome, **V2** for Firefox
+- Browser polyfill (`src/browser-polyfill.js`) for cross-browser compatibility
+- Direct storage access for better Firefox support
+- Modern UI with dark theme
 
-- **Background script:** Manages rule storage and inter-component communication
-- **Content script:** Handles element selection, highlighting, and style application
-- **Popup interface:** Provides rule management and extension controls
-- **Modern CSS:** Dark theme with gold accents and smooth animations
+## Privacy
 
-## Use Cases
-
-- **Ad blocking:** Remove persistent advertising banners and popups
-- **Reading enhancement:** Hide sidebars and distracting elements for better focus
-- **Accessibility:** Adjust colors and font sizes for better readability
-- **Productivity:** Eliminate distracting elements from work-related websites
-- **Customization:** Personalize frequently visited sites to match your preferences
-
-## Privacy and Security
-
-- **Local storage only:** All rules and modifications are stored locally in your browser
-- **No data collection:** The extension does not send any data to external servers
-- **No permissions abuse:** Only requests necessary permissions for basic functionality
+- All data stored locally
+- No external servers
+- No tracking or analytics

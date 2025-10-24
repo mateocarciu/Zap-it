@@ -1,0 +1,59 @@
+{
+    "manifest_version": 2,
+    "name": "Zap It - Web Page Editor",
+    "version": "1.0.2",
+    "description": "Edit text and styles from any web page, remove elements, and persist changes across visits.",
+    "permissions": [
+        "activeTab",
+        "storage",
+        "<all_urls>"
+    ],
+    "background": {
+        "scripts": [
+            "src/browser-polyfill.js",
+            "src/background/managers/StorageManager.js",
+            "src/background/managers/MessageHandler.js",
+            "src/background/managers/TabManager.js",
+            "src/background/background.js"
+        ]
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "src/browser-polyfill.js",
+                "src/content/utils/Utils.js",
+                "src/content/modules/ElementSelector.js",
+                "src/content/managers/EventManager.js",
+                "src/content/modules/ContextMenu.js",
+                "src/content/modules/StylePanel.js",
+                "src/content/managers/RuleManager.js",
+                "src/content/modules/TextEditor.js",
+                "src/content/content.js"
+            ],
+            "css": [
+                "src/content/css/content.css"
+            ],
+            "run_at": "document_end"
+        }
+    ],
+    "browser_action": {
+        "default_popup": "src/popup/html/popup.html",
+        "default_title": "Zap It - Web Page Editor",
+        "default_icon": {
+            "16": "assets/icons/icon16.png",
+            "48": "assets/icons/icon48.png",
+            "128": "assets/icons/icon128.png"
+        }
+    },
+    "icons": {
+        "16": "assets/icons/icon16.png",
+        "48": "assets/icons/icon48.png",
+        "128": "assets/icons/icon128.png"
+    },
+    "web_accessible_resources": [
+        "src/content/css/content.css"
+    ]
+}

@@ -24,8 +24,8 @@ class ZapItContentScript {
 
 	async loadInitialState() {
 		try {
-			const response = await chrome.runtime.sendMessage({ action: 'getEditMode' })
-			if (response && response.editMode) {
+			const result = await chrome.storage.local.get(['editMode'])
+			if (result && result.editMode) {
 				this.enableEditMode()
 			}
 		} catch (error) {

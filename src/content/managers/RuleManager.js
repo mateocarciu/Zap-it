@@ -8,19 +8,32 @@ window.ZapItRuleManager = class {
 	}
 
 	/**
-	 * Saves a rule via the background script
+	 * Saves a rule directly to storage (Firefox & Google compatible)
 	 * @param {Object} rule - The rule to save
 	 */
 	async saveRule(rule) {
 		try {
-			const response = await chrome.runtime.sendMessage({
-				action: 'saveRule',
-				rule: rule
+			// Save directly to storage for better Firefox compatibility
+			const hostname = new URL(window.location.href).hostname
+			const storageKey = `rules_${hostname}`
+
+			const result = await chrome.storage.local.get([storageKey])
+			const existingRules = result[storageKey] || []
+
+			const newRule = {
+				...rule,
+				id: Date.now() + Math.random(),
+				created: new Date().toISOString(),
+				url: window.location.href
+			}
+
+			existingRules.push(newRule)
+
+			await chrome.storage.local.set({
+				[storageKey]: existingRules
 			})
 
-			if (response && response.success) {
-				this.appliedRules.push(rule)
-			}
+			this.appliedRules.push(newRule)
 		} catch (error) {
 			console.error('Error saving rule:', error)
 		}
@@ -311,13 +324,13 @@ window.ZapItRuleManager = class {
 	 */
 	async loadAndApplyRules() {
 		try {
-			const response = await chrome.runtime.sendMessage({
-				action: 'getRules',
-				url: window.location.href
-			})
+			const hostname = new URL(window.location.href).hostname
+			const storageKey = `rules_${hostname}`
+			const result = await chrome.storage.local.get([storageKey])
+			const rules = result[storageKey] || []
 
-			if (response && response.rules) {
-				this.applyRules(response.rules)
+			if (rules.length > 0) {
+				this.applyRules(rules)
 			}
 		} catch (error) {
 			console.error('Error loading rules:', error)
