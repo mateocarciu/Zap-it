@@ -104,40 +104,62 @@ class ZapItPopup {
 			noRules.style.display = 'block'
 			clearRules.style.display = 'none'
 			reapplyRules.style.display = 'none'
-		} else {
-			rulesList.style.display = 'flex'
-			noRules.style.display = 'none'
-			clearRules.style.display = 'flex'
-			reapplyRules.style.display = 'flex'
-
-			rulesList.innerHTML = rules
-				.map(
-					(rule, index) => `
-					<div class="rule-item">
-						<div class="rule-info">
-							<div class="rule-selector">${this.shortenSelector(rule.selector)}</div>
-							<div class="rule-action">${this.getActionText(rule.action)}</div>
-							<div class="rule-timestamp">${this.formatTimestamp(rule.created)}</div>
-						</div>
-						<button class="delete-rule-btn" data-rule-id="${rule.id}" title="Delete this rule">
-							<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-								<path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14Z"/>
-								<path d="M10 11v6M14 11v6"/>
-							</svg>
-						</button>
-					</div>
-				`
-				)
-				.join('')
-
-			document.querySelectorAll('.delete-rule-btn').forEach((btn) => {
-				btn.addEventListener('click', (e) => {
-					e.stopPropagation()
-					const ruleId = e.currentTarget.getAttribute('data-rule-id')
-					this.deleteIndividualRule(ruleId)
-				})
-			})
+			return
 		}
+
+		rulesList.style.display = 'flex'
+		noRules.style.display = 'none'
+		clearRules.style.display = 'flex'
+		reapplyRules.style.display = 'flex'
+
+		rulesList.innerHTML = ''
+
+		rules.forEach((rule) => {
+			const item = document.createElement('div')
+			item.className = 'rule-item'
+
+			const info = document.createElement('div')
+			info.className = 'rule-info'
+
+			const selectorDiv = document.createElement('div')
+			selectorDiv.className = 'rule-selector'
+			selectorDiv.textContent = this.shortenSelector(rule.selector)
+
+			const actionDiv = document.createElement('div')
+			actionDiv.className = 'rule-action'
+			actionDiv.textContent = this.getActionText(rule.action)
+
+			const tsDiv = document.createElement('div')
+			tsDiv.className = 'rule-timestamp'
+			tsDiv.textContent = this.formatTimestamp(rule.created)
+
+			info.appendChild(selectorDiv)
+			info.appendChild(actionDiv)
+			info.appendChild(tsDiv)
+
+			const delBtn = document.createElement('button')
+			delBtn.className = 'delete-rule-btn'
+			delBtn.setAttribute('data-rule-id', rule.id)
+			delBtn.title = 'Delete this rule'
+
+			delBtn.innerHTML = `
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14Z"/>
+					<path d="M10 11v6M14 11v6"/>
+				</svg>
+			`
+
+			delBtn.addEventListener('click', (e) => {
+				e.stopPropagation()
+				const ruleId = e.currentTarget.getAttribute('data-rule-id')
+				this.deleteIndividualRule(ruleId)
+			})
+
+			item.appendChild(info)
+			item.appendChild(delBtn)
+
+			rulesList.appendChild(item)
+		})
 	}
 
 	shortenSelector(selector) {

@@ -52,12 +52,13 @@ window.ZapItTextEditor = class {
 				// Generate unique selector to avoid affecting other elements
 				const selectorInfo = this.contentScript.ruleManager.ensureUniqueSelector(element, selector)
 
+				const safeNewText = window.ZapItUtils.sanitizeHTML(newText)
+
 				const rule = {
 					selector: selectorInfo.uniqueSelector,
 					baseSelector: selectorInfo.baseSelector,
 					action: 'editText',
-					originalText: originalText,
-					newText: newText
+					newText: safeNewText
 				}
 				await this.contentScript.ruleManager.saveRule(rule)
 			}

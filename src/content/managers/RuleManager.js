@@ -263,7 +263,7 @@ window.ZapItRuleManager = class {
 			case 'editText':
 				if (rule.newText && !element.dataset.zapitOriginalText) {
 					element.dataset.zapitOriginalText = element.innerHTML
-					element.innerHTML = rule.newText
+					element.innerHTML = window.ZapItUtils.sanitizeHTML(rule.newText)
 				}
 				break
 		}

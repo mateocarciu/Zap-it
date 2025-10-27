@@ -34,13 +34,78 @@ window.ZapItStylePanel = class {
 		backdrop.className = 'zapit-backdrop'
 		document.body.appendChild(backdrop)
 
-		// Create panel
 		const panel = document.createElement('div')
 		panel.className = 'zapit-style-panel'
 
+		const header = document.createElement('div')
+		header.className = 'zapit-style-panel-header'
+		const title = document.createElement('span')
+		title.textContent = 'Edit Element Style'
+		const closeBtn = document.createElement('button')
+		closeBtn.className = 'zapit-style-panel-close'
+		closeBtn.textContent = '×'
+		header.appendChild(title)
+		header.appendChild(closeBtn)
+
+		const content = document.createElement('div')
+		content.className = 'zapit-style-panel-content'
+
 		const computedStyle = window.getComputedStyle(element)
 
-		panel.innerHTML = this.createPanelHTML(computedStyle)
+		const createGroup = (labelText, inputType, id, value, placeholder) => {
+			const group = document.createElement('div')
+			group.className = 'zapit-style-group'
+
+			const groupTitle = document.createElement('div')
+			groupTitle.className = 'zapit-style-group-title'
+			groupTitle.textContent = labelText
+
+			let input
+			if (inputType === 'color') {
+				input = document.createElement('input')
+				input.type = 'color'
+			} else {
+				input = document.createElement('input')
+				input.type = 'text'
+			}
+
+			input.className = 'zapit-style-input'
+			input.id = id
+			if (value !== undefined && value !== null) input.value = value
+			if (placeholder) input.placeholder = placeholder
+
+			group.appendChild(groupTitle)
+			group.appendChild(input)
+			return group
+		}
+
+		content.appendChild(createGroup('Background Color', 'color', 'backgroundColor', window.ZapItUtils.rgbToHex(computedStyle.backgroundColor), ''))
+		content.appendChild(createGroup('Text Color', 'color', 'color', window.ZapItUtils.rgbToHex(computedStyle.color), ''))
+		content.appendChild(createGroup('Font Size', 'text', 'fontSize', computedStyle.fontSize, 'e.g. 16px, 1.2em, 120%'))
+		content.appendChild(createGroup('Border', 'text', 'border', computedStyle.border, 'e.g. 1px solid #000'))
+		content.appendChild(createGroup('Padding', 'text', 'padding', computedStyle.padding, 'e.g. 10px, 5px 10px'))
+		content.appendChild(createGroup('Margin', 'text', 'margin', computedStyle.margin, 'e.g. 10px, 5px 10px'))
+
+		const buttons = document.createElement('div')
+		buttons.className = 'zapit-style-buttons'
+
+		const applyBtn = document.createElement('button')
+		applyBtn.className = 'zapit-button zapit-button-primary'
+		applyBtn.id = 'applyStyles'
+		applyBtn.textContent = 'Apply Changes'
+
+		const cancelBtn = document.createElement('button')
+		cancelBtn.className = 'zapit-button zapit-button-secondary'
+		cancelBtn.id = 'cancelStyles'
+		cancelBtn.textContent = 'Cancel'
+
+		buttons.appendChild(applyBtn)
+		buttons.appendChild(cancelBtn)
+
+		content.appendChild(buttons)
+
+		panel.appendChild(header)
+		panel.appendChild(content)
 
 		document.body.appendChild(panel)
 		this.panel = panel

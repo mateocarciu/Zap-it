@@ -28,6 +28,22 @@ window.ZapItUtils = {
 	},
 
 	/**
+	 * Sanitize HTML by escaping it.
+	 * @param {string} html
+	 * @returns {string} escaped HTML safe to set via innerHTML
+	 */
+	sanitizeHTML(html) {
+		try {
+			if (html === undefined || html === null) return ''
+			const d = document.createElement('div')
+			d.textContent = String(html)
+			return d.innerHTML
+		} catch (e) {
+			return ''
+		}
+	},
+
+	/**
 	 * Escapes CSS selectors to handle special characters
 	 * @param {string} selector - CSS selector string
 	 * @returns {string} Escaped CSS selector
